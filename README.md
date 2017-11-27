@@ -9,7 +9,6 @@ DESCRIPTION	: This Powershell script will .the addition and deletion of Global B
 
 FEATURES
 The ability to perform the following:-
-- Add an Allow rule, verify if rule exist
 - Add a Block rule, verify if rule exist
 - Add entries from an answer file, verify if rule exist
 - Delete via a single hash
