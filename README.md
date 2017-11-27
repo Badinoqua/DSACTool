@@ -19,3 +19,5 @@ REQUIRMENTS
 - Supports Deep Security 10.2 and higher
 - PowerShell 3.0 and higher
 - Login name and password with role "Full Access" assigned to it
+
+PS. SourceList files include sample data.  Please update to include actual data.
