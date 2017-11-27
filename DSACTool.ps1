@@ -16,13 +16,12 @@ $MenuList = @"
 	2: List AC Global Ruleset to Screen.
 	3: Export AC Global Ruleset to a File.
 	
-	4: Add a New Allow Rule (Not Capable).
-	5: Add a New Block Rule.
-	6: Add New Rules by Answer File.
+	4: Add a New Block Rule.
+	5: Add New Rules by Answer File.
 	
-	7: Delete a Rule by ID.
-	8: Delete a Rule by Hash.
-	9: Delete Rules by Answer File.
+	6: Delete a Rule by ID.
+	7: Delete a Rule by Hash.
+	8: Delete Rules by Answer File.
 	
 	Q: Quit.
 "@
@@ -130,18 +129,6 @@ function AddRule {
 			echo "An error occurred during rule creation. Error returned was: $($_.Exception.Message)"
 		}
 	}
-}
-
-function AddAllowRule {
-# Is not implemented
-<#	$Hash = Read-Host "Please Enter The sha256 Hash Value"
-	$description = Read-Host "Please Enter The Rule Description"
-	$action = "allow"
-	AddRule -SHA $Hash -Description $Description -Action $Action
-	write-Host "Adding new rule Completed."
-	pause
-	clear	
-#>
 }
 
 function AddBlockRule {
@@ -255,18 +242,11 @@ do {
 			'1' {	SearchRules	}
 			'2' {	ListRules	}
 			'3' {	ExportRules	}
-			'4' {	AddAllowRule	}
-			'5' {	AddBlockRule	}
-			'6' {	AddRulesList	}
-			'7' {	DelRuleByID	}
-			'8' {	DelRuleByHash	}
-			'9' {	DelRuleList	}
+			'4' {	AddBlockRule	}
+			'5' {	AddRulesList	}
+			'6' {	DelRuleByID	}
+			'7' {	DelRuleByHash	}
+			'8' {	DelRuleList	}
 			'q' {	return}
      }
 } Until ($input -eq 'q')
-
-
-
-
-
-
