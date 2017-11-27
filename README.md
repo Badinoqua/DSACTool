@@ -3,9 +3,9 @@ AUTHOR		: Yanni Kashoqa
 
 TITLE		: Deep Security Application Control Block by Hash
 
-VERSION		: 0.4
+VERSION		: 0.5
 
-DESCRIPTION	: This Powershell script will .the addition and deletion of Global Block Hashes in Deep Security.
+DESCRIPTION	: This Powershell script will perform the addition and deletion of Global Block Hashes in Deep Security.
 
 FEATURES
 The ability to perform the following:-
