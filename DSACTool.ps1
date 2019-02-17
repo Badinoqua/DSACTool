@@ -1,15 +1,22 @@
 ﻿
-$manager = "dsm.domain.local"
-$Port = "4119"
-$managerUri="https://" + $manager + ":" + $port + "/rest/"
-$authUri = $managerUri + "authentication/login/primary"
+Clear-Host
+$Credentials = (Get-Content "$PSScriptRoot\DS-Config.json" -Raw) | ConvertFrom-Json
+
+$Manager = $Credentials.MANAGER
+$Port = $Credentials.PORT
+$Tenant = $Credentials.TENANT
+#$UserName = $Credentials.USER_NAME
+#$Password = $Credentials.PASSWORD
+
+$DSM_URI ="https://" + $manager + ":" + $port + "/rest/"
+
 $headers = @{'Content-Type'='application/json'}
 $ReportFile	= "$PSScriptRoot\DSACTool_AC_Global_Rulesets.csv"
 $AddSourceFile = "$PSScriptRoot\DSACTool_AC_Global_AddSourceList.txt"
 $DelSourceFile = "$PSScriptRoot\DSACTool_AC_Global_DelSourceList.txt"
 
 $ErrorActionPreference = 'SilentlyContinue'
-$PSVersionRequired = "3"
+#$PSVersionRequired = "3"
 
 $MenuList = @"
 	1: Search for a Rule by Hash Value.
@@ -48,10 +55,21 @@ Function Connect-DSM {
 	    	password = $DSM_PASS
 			}
 	}
+
+	if (!$Tenant) {
+		$AUTH_URI = $DSM_URI + "authentication/login/primary"
+	}
+	else {
+		$AUTH_URI = $DSM_URI + "authentication/login"
+		$creds.dsCredentials.Add("tenantName", $tenant)
+	}
+
+
+
 	$AuthData = $creds | ConvertTo-Json
 
 	try{
-		$Global:sID = Invoke-RestMethod -Uri $authUri -Method Post -Body $AuthData -Headers $headers
+		$Global:sID = Invoke-RestMethod -Uri $AUTH_URI -Method Post -Body $AuthData -Headers $headers
 	}
 	catch{
 		Write-Host "[ERROR]	Failed to logon to DSM.	$_"
@@ -65,10 +83,11 @@ Function Connect-DSM {
 	$cookie.domain = $manager
 	$Global:WebSession = new-object Microsoft.PowerShell.Commands.WebRequestSession
 	$WebSession.cookies.add($cookie)
+	write-host $sID
 }
 
 function ListRules {
-$URI = $managerUri + "rulesets/global"
+$URI = $DSM_URI + "rulesets/global"
 $RulesObj = Invoke-RestMethod -Uri $URI -Method Get -WebSession $WebSession
 $MyRules = $RulesObj.DescribeGlobalRulesetResponse.ruleset
 
@@ -77,7 +96,7 @@ Write-Host $MyRules1
 }
 
 function ExportRules {
-	$URI = $managerUri + "rulesets/global"
+	$URI = $DSM_URI + "rulesets/global"
 	$RulesObj = Invoke-RestMethod -Uri $URI -Method Get -WebSession $WebSession
 	$MyRules = $RulesObj.DescribeGlobalRulesetResponse.ruleset
 	$RuleCount = $MyRules.rules.Count
@@ -120,7 +139,8 @@ function AddRule {
 	} Else {
 		write-Host "Adding new rule."
 		$GlobalRuleJSON = $GlobalRule | ConvertTo-Json
-		$URI = $managerUri + "rulesets/global/rules"
+		$URI = $DSM_URI + "rulesets/global/rules"
+		Write-Host $URI
 		try{
 			$RulesObj = Invoke-RestMethod -Uri $URI -Method Post -WebSession $WebSession -Body $GlobalRuleJSON -Headers $headers
 		}
@@ -156,7 +176,7 @@ Function AddRulesList {
 function DelRule {
 	param (	[parameter(Mandatory=$true)] $RuleID	)
 
-	$URI = $managerUri + "rulesets/global/rules/" + $RuleID
+	$URI = $DSM_URI + "rulesets/global/rules/" + $RuleID
 	try{
 		$RulesObj = Invoke-RestMethod -Uri $URI -Method Delete -WebSession $WebSession -Headers $headers
 	}
@@ -216,7 +236,7 @@ function SearchRules {
 
 Function LookupRuleID {
 	param (	[parameter(Mandatory=$true)] $Hash )
-	$URI = $managerUri + "rulesets/global"
+	$URI = $DSM_URI + "rulesets/global"
 	$RulesObj = Invoke-RestMethod -Uri $URI -Method Get -WebSession $WebSession
 	$Ruleset = $RulesObj.DescribeGlobalRulesetResponse.ruleset
 	$RuleCount = $Ruleset.rules.Count
