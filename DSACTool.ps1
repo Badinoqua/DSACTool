@@ -8,9 +8,9 @@ $Tenant = $Credentials.TENANT
 #$UserName = $Credentials.USER_NAME
 #$Password = $Credentials.PASSWORD
 
-$DSM_URI ="https://" + $manager + ":" + $port + "/rest/"
+$DSM_URI ="https://" + $Manager + ":" + $Port + "/rest/"
 
-$headers = @{'Content-Type'='application/json'}
+$Headers = @{'Content-Type'='application/json'}
 $ReportFile	= "$PSScriptRoot\DSACTool_AC_Global_Rulesets.csv"
 $AddSourceFile = "$PSScriptRoot\DSACTool_AC_Global_AddSourceList.txt"
 $DelSourceFile = "$PSScriptRoot\DSACTool_AC_Global_DelSourceList.txt"
@@ -140,9 +140,8 @@ function AddRule {
 		write-Host "Adding new rule."
 		$GlobalRuleJSON = $GlobalRule | ConvertTo-Json
 		$URI = $DSM_URI + "rulesets/global/rules"
-		Write-Host $URI
 		try{
-			$RulesObj = Invoke-RestMethod -Uri $URI -Method Post -WebSession $WebSession -Body $GlobalRuleJSON -Headers $headers
+			$RuleObj = Invoke-RestMethod -Uri $URI -Method Post -WebSession $WebSession -Body $GlobalRuleJSON -Headers $headers
 		}
 		catch{
 			Write-Host "[ERROR]	Failed to create rule.	$_"
@@ -153,8 +152,8 @@ function AddRule {
 
 function AddBlockRule {
 	$Hash = Read-Host "Please Enter The sha256 Hash Value"
-	$description = Read-Host "Please Enter The Rule Description"
-	$action = "block"
+	$Description = Read-Host "Please Enter The Rule Description"
+	$Action = "block"
 	AddRule -SHA $Hash -Description $Description -Action $Action
 	write-Host "Adding new rule Completed."
 	pause
@@ -178,7 +177,7 @@ function DelRule {
 
 	$URI = $DSM_URI + "rulesets/global/rules/" + $RuleID
 	try{
-		$RulesObj = Invoke-RestMethod -Uri $URI -Method Delete -WebSession $WebSession -Headers $headers
+		Invoke-RestMethod -Uri $URI -Method Delete -WebSession $WebSession -Headers $headers
 	}
 	catch{
 		Write-Host "[ERROR]	Failed to Delete rule.	$_"
