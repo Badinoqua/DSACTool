@@ -64,50 +64,6 @@ Function Connect-DSM {
 		$creds.dsCredentials.Add("tenantName", $tenant)
 	}
 
-
-
-	$AuthData = $creds | ConvertTo-Json
-
-	try{
-		$Global:sID = Invoke-RestMethod -Uri $AUTH_URI -Method Post -Body $AuthData -Headers $headers
-	}
-	catch{
-		Write-Host "[ERROR]	Failed to logon to DSM.	$_"
-		Write-Host "An error occurred during authentication. Verify username and password and try again. `nError returned was: $($_.Exception.Message)"
-		Exit
-	}
-
-	$cookie = new-object System.Net.Cookie
-	$cookie.name = "sID"
-	$cookie.value =  $sID
-	$cookie.domain = $manager
-	$Global:WebSession = new-object Microsoft.PowerShell.Commands.WebRequestSession
-	$WebSession.cookies.add($cookie)
-	write-host $sID
-	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-	[System.Net.ServicePointManager]::ServerCertificateValidationCallback={$true}
-
-	$DSM_Cred	= Get-Credential -Message "Enter DSM Credentials"
-	$DSM_ID		= $DSM_Cred.GetNetworkCredential().UserName
-	$DSM_PASS	= $DSM_Cred.GetNetworkCredential().Password
-
-	$creds = @{
-		dsCredentials = @{
-			userName = $DSM_ID
-	    	password = $DSM_PASS
-			}
-	}
-
-	if (!$Tenant) {
-		$AUTH_URI = $DSM_URI + "authentication/login/primary"
-	}
-	else {
-		$AUTH_URI = $DSM_URI + "authentication/login"
-		$creds.dsCredentials.Add("tenantName", $tenant)
-	}
-
-
-
 	$AuthData = $creds | ConvertTo-Json
 
 	try{
