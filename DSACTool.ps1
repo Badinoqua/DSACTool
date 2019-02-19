@@ -16,7 +16,6 @@ $AddSourceFile = "$PSScriptRoot\DSACTool_AC_Global_AddSourceList.txt"
 $DelSourceFile = "$PSScriptRoot\DSACTool_AC_Global_DelSourceList.txt"
 
 $ErrorActionPreference = 'SilentlyContinue'
-#$PSVersionRequired = "3"
 
 $MenuList = @"
 	1: Search for a Rule by Hash Value.
@@ -39,7 +38,6 @@ Function MyLog {
 
 		Write-Output "$msg" | Out-File $OutputFile -append
 }
-
 
 Function Connect-DSM {
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
